@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2018-2022 Advanced Micro Devices, Inc. All rights reserved.
+# Copyright (c) 2018-2024 Advanced Micro Devices, Inc. All rights reserved.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -25,7 +25,7 @@ import json
 from PIL import Image, ImageDraw, ImageFont
 
 
-PROGRAM_VERSION = 'Vulkan/D3D12 Memory Allocator Dump Visualization 3.0.1'
+PROGRAM_VERSION = 'Vulkan/D3D12 Memory Allocator Dump Visualization 3.0.4'
 IMG_WIDTH = 1200
 IMG_MARGIN = 8
 TEXT_MARGIN = 4
@@ -81,16 +81,17 @@ def IsDataEmpty():
 def RemoveEmptyType():
     global data
     for poolType in list(data.keys()):
-        if len(data[poolType]['DedicatedAllocations']) > 0:
+        pool = data[poolType]
+        if len(pool['DedicatedAllocations']) > 0:
            continue
-        if len(data[poolType]['Blocks']) > 0:
+        if len(pool['Blocks']) > 0:
             continue
         empty = True
-        for customPool in data[poolType]['CustomPools'].values():
-            if len(data[poolType]['Blocks']) > 0:
+        for customPool in pool['CustomPools'].values():
+            if len(customPool['Blocks']) > 0:
                 empty = False
                 break
-            if len(data[poolType]['DedicatedAllocations']) > 0:
+            if len(customPool['DedicatedAllocations']) > 0:
                 empty = False
                 break
         if empty:
@@ -158,7 +159,7 @@ def TypeToColor(type, usage):
         elif type == 'IMAGE_OPTIMAL':
             if (usage & 0x20) != 0: # DEPTH_STENCIL_ATTACHMENT
                 return 246, 128, 255, 255 # Pink
-            elif (usage & 0xD0) != 0: # INPUT_ATTACHMENT | TRANSIENT_ATTACHMENT | COLOR_ATTACHMENT
+            elif (usage & 0xD8) != 0: # INPUT_ATTACHMENT | TRANSIENT_ATTACHMENT | COLOR_ATTACHMENT | STORAGE
                 return 179, 179, 255, 255 # Blue
             elif (usage & 0x4) != 0: # SAMPLED
                 return 0, 255, 255, 255 # Aqua
@@ -276,8 +277,8 @@ if __name__ == '__main__':
             draw.text((x + IMG_MARGIN + TEXT_MARGIN, y), "0", fill=COLOR_TEXT_H2, font=font)
         else:
             text = BytesToStr(byte)
-            textSize = draw.textsize(text, font=font)
-            draw.text((x + IMG_MARGIN - textSize[0] - TEXT_MARGIN, y), text, fill=COLOR_TEXT_H2, font=font)
+            textLength = draw.textlength(text, font=font)
+            draw.text((x + IMG_MARGIN - textLength - TEXT_MARGIN, y), text, fill=COLOR_TEXT_H2, font=font)
         byte += bytesBetweenGridLines
     y += FONT_SIZE + IMG_MARGIN
     

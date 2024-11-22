@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['memory_20mapping_0',['Memory mapping',['../memory_mapping.html',1,'index']]]
+  ['general_20considerations_0',['General considerations',['../general_considerations.html',1,'index']]],
+  ['graphics_20apis_1',['Interop with other graphics APIs',['../other_api_interop.html',1,'index']]]
 ];
