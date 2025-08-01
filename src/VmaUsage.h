@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2017-2024 Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2017-2025 Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -96,8 +96,15 @@ include all public interface declarations. Example:
     #pragma clang diagnostic ignored "-Wnullability-completeness"
 #endif
 
-#include <vulkan/vulkan.h>
-#include <vulkan/vulkan_win32.h>
+#ifdef VMA_VOLK_HEADER_PATH
+    #include VMA_VOLK_HEADER_PATH
+#else
+    #include <vulkan/vulkan.h>
+#endif
+
+#ifdef _WIN32
+    #include <vulkan/vulkan_win32.h>
+#endif  // #ifdef _WIN32
 
 #include "vk_mem_alloc.h"
 
